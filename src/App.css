@@ -1,3 +1,162 @@
+.landing-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #08122b 0%, #0b1b40 45%, #10254e 100%);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-logo-container {
+  padding: 24px 32px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.landing-logo-top {
+  width: clamp(100px, 18vw, 180px);
+  height: auto;
+  filter: drop-shadow(0 8px 20px rgba(59, 130, 246, 0.24));
+}
+
+.landing-hero {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  width: 100%;
+}
+
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.landing-title {
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  color: #f8fafc;
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.landing-tagline {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: #cbd5e1;
+  margin: 0;
+  font-weight: 500;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.24);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.feature-card h3 {
+  color: #f8fafc;
+  font-size: 1.25rem;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.feature-card p {
+  color: #cbd5e1;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.landing-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  padding: 18px 48px;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 16px 40px rgba(37, 99, 235, 0.3);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 52px rgba(37, 99, 235, 0.4);
+}
+
+.cta-text {
+  color: #cbd5e1;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .landing-logo-container {
+    padding: 16px 20px;
+  }
+
+  .landing-hero {
+    padding: 24px 16px;
+  }
+
+  .landing-container {
+    gap: 32px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature-card {
+    padding: 24px;
+  }
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -193,8 +352,10 @@
 .auth-nav {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 14px;
-  padding: 20px 0 0;
+  padding: 20px;
+  flex-wrap: wrap;
 }
 
 .auth-nav button {
@@ -217,6 +378,16 @@
   background: #1d4ed8;
   color: #ffffff;
   border-color: transparent;
+}
+
+.auth-nav button.back-button {
+  margin-right: auto;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.auth-nav button.back-button:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .signup-page {
@@ -370,4 +541,104 @@
   .signup-card {
     padding: 28px;
   }
+}
+
+/* Driver dashboard styles — revised to match landing page theme */
+.dashboard-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #08122b 0%, #0b1b40 45%, #10254e 100%);
+}
+
+/* Ensure readable text colors inside the dashboard */
+.dashboard-root,
+.dashboard-root .panel,
+.dashboard-root .panel *,
+.dashboard-root h1,
+.dashboard-root h2,
+.dashboard-root h3,
+.dashboard-root p,
+.dashboard-root dt,
+.dashboard-root dd,
+.dashboard-root label,
+.dashboard-root a {
+  color: #e6eef8 !important;
+}
+
+/* Inputs and form controls inside dashboard should use light text */
+.dashboard-root input,
+.dashboard-root textarea,
+.dashboard-root select {
+  color: #f8fafc;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Buttons consistent contrast */
+.dashboard-root button,
+.dashboard-root .accept,
+.dashboard-root .decline,
+.dashboard-root .account-button {
+  color: #ffffff !important;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(90deg, rgba(13,37,78,0.2), transparent);
+}
+
+.header-left { display: flex; align-items: center; gap: 14px; }
+.dashboard-title { color: #f8fafc; margin: 0; font-weight:800 }
+.header-right { display:flex; align-items:center; gap:14px }
+.welcome { color: #cbd5e1; font-weight:600 }
+.account-button {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color:#fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight:700;
+  box-shadow: 0 12px 30px rgba(37,99,235,0.14);
+}
+
+.dashboard-main { display: grid; grid-template-columns: 1fr 340px; gap: 22px; padding: 22px; max-width:1200px; margin:0 auto; width:100% }
+.panel { background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px; box-shadow: 0 20px 50px rgba(2,6,23,0.35); }
+.left-panel { min-height: 520px }
+.right-panel { height: fit-content }
+
+.panel-section + .panel-section { margin-top: 18px }
+.status-row { display:flex; align-items:center; gap:14px }
+.switch { position: relative; display:inline-block; width:52px; height:30px }
+.switch input { opacity:0; width:0; height:0 }
+.slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.08); transition:.22s; border-radius:30px }
+.switch input:checked + .slider { background: linear-gradient(90deg,#16a34a,#059669) }
+.slider:before { content:''; position:absolute; height:24px; width:24px; left:3px; top:3px; background:white; border-radius:50%; transition:.22s }
+.switch input:checked + .slider:before { transform: translateX(22px) }
+
+.request-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px }
+.request-card { display:flex; justify-content:space-between; gap:14px; padding:14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); transition:transform .18s, box-shadow .18s }
+.request-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.4) }
+.request-info { color:#e6eef8 }
+.request-name { font-weight:800; color:#f8fafc }
+.request-location, .request-phone { font-size:0.95rem; color:#cbd5e1 }
+.request-actions { display:flex; align-items:center; gap:10px }
+.priority { padding:6px 12px; border-radius:999px; font-weight:800; font-size:0.85rem; text-transform:uppercase }
+.priority-high { background: rgba(220,38,38,0.12); color:#fecaca; border:1px solid rgba(220,38,38,0.12) }
+.priority-medium { background: rgba(234,179,8,0.08); color:#fef3c7; border:1px solid rgba(234,179,8,0.08) }
+.priority-low { background: rgba(34,197,94,0.08); color:#dcfce7; border:1px solid rgba(34,197,94,0.08) }
+.accept { background: linear-gradient(135deg,#10b981,#059669); color:white; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700 }
+.decline { background:transparent; color:#e2e8f0; border:1px solid rgba(255,255,255,0.06); padding:8px 12px; border-radius:10px; cursor:pointer }
+.map-placeholder { height:200px; border-radius:10px; background:radial-gradient(circle at 10% 10%, rgba(37,99,235,0.12), rgba(2,6,23,0.12)); display:flex; align-items:center; justify-content:center; color:#cbd5e1 }
+.info-list dt { color:#cbd5e1; font-weight:700 }
+.info-list dd { margin:0 0 12px 0; font-size:1.1rem; color:#f8fafc }
+
+@media (max-width: 900px) {
+  .dashboard-main { grid-template-columns: 1fr; }
+  .right-panel { order: 2 }
 }

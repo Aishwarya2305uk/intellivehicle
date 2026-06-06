@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
-function LoginForm() {
+function LoginForm({ onLogin }) {
   const [form, setForm] = useState({ email: '', password: '' })
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -31,9 +31,14 @@ function LoginForm() {
         setError(data.error || 'Login failed.')
         return
       }
-
       setMessage(`Welcome back, ${data.user.name}!`)
       setForm({ email: '', password: '' })
+
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+      }
+
+      if (typeof onLogin === 'function') onLogin(data.user)
     } catch (err) {
       console.error(err)
       setError('Unable to reach the server. Check that the backend is running.')
