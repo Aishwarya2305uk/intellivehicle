@@ -37,6 +37,26 @@ export default function DriverDashboard({ onBack, user: initialUser, token, onAc
     loadMe()
   }, [token, user])
 
+  useEffect(() => {
+    // connect to websocket for live request updates and location tracking
+    const wsUrl = import.meta.env.VITE_WS_URL || (location.protocol === 'https:' ? 'wss://localhost:4000' : 'ws://localhost:4000')
+    let ws
+    try {
+      ws = new WebSocket(wsUrl)
+      ws.onmessage = (ev) => {
+        try {
+          const msg = JSON.parse(ev.data)
+          if (msg.type === 'new_request') {
+            setRequests(prev => [msg.request, ...prev])
+          }
+        } catch (e) {}
+      }
+    } catch (e) {
+      // ignore
+    }
+    return () => { if (ws) ws.close() }
+  }, [])
+
   return (
     <div className="dashboard-root">
       <header className="dashboard-header">
@@ -105,8 +125,8 @@ export default function DriverDashboard({ onBack, user: initialUser, token, onAc
                   <dd>{user.phone}</dd>
                 </div>
                 <div>
-                  <dt>City</dt>
-                  <dd>{user.city}</dd>
+                  <dt>Address</dt>
+                  <dd>{user.address}</dd>
                 </div>
               </dl>
             ) : (

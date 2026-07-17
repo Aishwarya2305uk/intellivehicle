@@ -6,6 +6,7 @@ import SignUpForm from './SignUpForm.jsx'
 import DriverSignUpForm from './DriverSignUpForm.jsx'
 import DriverDashboard from './DriverDashboard.jsx'
 import AccountSettings from './AccountSettings.jsx'
+import UserDashboard from './UserDashboard.jsx'
 
 function App() {
   const [page, setPage] = useState('landing')
@@ -39,6 +40,15 @@ function App() {
     setMode('signup')
   }
 
+  // Route a logged-in account to the dashboard that matches its role.
+  const dashboardPageFor = (account) =>
+    account && account.role === 'driver' ? 'driver-dashboard' : 'user-dashboard'
+
+  const goToDashboard = (account) => {
+    setUser(account)
+    setPage(dashboardPageFor(account))
+  }
+
   if (page === 'landing') {
     return <LandingPage onGetStarted={handleGetStarted} />
   }
@@ -47,13 +57,17 @@ function App() {
     return <DriverDashboard onBack={() => setPage('auth')} user={user} token={localStorage.getItem('token')} onAccountClick={() => setPage('account')} />
   }
 
+  if (page === 'user-dashboard') {
+    return <UserDashboard onBack={() => setPage('auth')} user={user} token={localStorage.getItem('token')} onAccountClick={() => setPage('account')} />
+  }
+
   if (page === 'account') {
     return (
       <AccountSettings
         token={localStorage.getItem('token')}
         initialUser={user}
-        onSaved={(u) => { setUser(u); setPage('driver-dashboard') }}
-        onBack={() => setPage('driver-dashboard')}
+        onSaved={(u) => goToDashboard(u)}
+        onBack={() => setPage(dashboardPageFor(user))}
       />
     )
   }
@@ -92,16 +106,16 @@ function App() {
         {user && (
           <button
             type="button"
-            onClick={() => setPage('driver-dashboard')}
+            onClick={() => setPage(dashboardPageFor(user))}
           >
-            Driver Dashboard
+            {user.role === 'driver' ? 'Driver Dashboard' : 'User Dashboard'}
           </button>
         )}
       </nav>
 
       {mode === 'signup' && <SignUpForm />}
       {mode === 'driver-signup' && <DriverSignUpForm />}
-      {mode === 'login' && <LoginForm onLogin={(u) => { setUser(u); setPage('driver-dashboard') }} />}
+      {mode === 'login' && <LoginForm onLogin={(u) => goToDashboard(u)} />}
     </div>
   )
 }

@@ -3,9 +3,24 @@ import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
+// Map an account object to the editable form fields for its role.
+function toForm(account) {
+  return {
+    name: account?.name || '',
+    phone: account?.phone || '',
+    address: account?.address || '',
+    city: account?.city || '',
+    pincode: account?.pincode || '',
+    state: account?.state || '',
+    dob: account?.dob || '',
+    gender: account?.gender || '',
+  }
+}
+
 export default function AccountSettings({ token, initialUser, onSaved, onBack }) {
   const [user, setUser] = useState(initialUser || null)
-  const [form, setForm] = useState({ name: '', phone: '', city: '', pincode: '', state: '', dob: '', gender: '' })
+  const [role, setRole] = useState(initialUser?.role || 'user')
+  const [form, setForm] = useState(toForm(initialUser))
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -13,7 +28,8 @@ export default function AccountSettings({ token, initialUser, onSaved, onBack })
     const t = token || localStorage.getItem('token')
     if (!t) {
       if (user) {
-        setForm({ name: user.name || '', phone: user.phone || '', city: user.city || '', pincode: user.pincode || '', state: user.state || '', dob: user.dob || '', gender: user.gender || '' })
+        setRole(user.role || 'user')
+        setForm(toForm(user))
       }
       return
     }
@@ -26,7 +42,8 @@ export default function AccountSettings({ token, initialUser, onSaved, onBack })
         }
         const data = await res.json()
         setUser(data.user)
-        setForm({ name: data.user.name || '', phone: data.user.phone || '', city: data.user.city || '', pincode: data.user.pincode || '', state: data.user.state || '', dob: data.user.dob || '', gender: data.user.gender || '' })
+        setRole(data.user.role || 'user')
+        setForm(toForm(data.user))
       } catch (err) {
         console.error(err)
         setError('Unable to load account details.')
@@ -86,37 +103,61 @@ export default function AccountSettings({ token, initialUser, onSaved, onBack })
             <input name="phone" value={form.phone} onChange={handleChange} />
           </div>
 
-          <div className="two-column-row">
+          {role === 'driver' ? (
             <div className="field-row">
-              <label>City</label>
-              <input name="city" value={form.city} onChange={handleChange} />
+              <label>Address</label>
+              <textarea
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                rows="3"
+                style={{
+                  border: '1px solid rgba(255, 255, 255, 0.16)',
+                  borderRadius: '16px',
+                  padding: '14px 16px',
+                  fontSize: '1rem',
+                  color: '#f8fafc',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  fontFamily: 'inherit',
+                  resize: 'vertical',
+                }}
+              />
             </div>
-            <div className="field-row">
-              <label>Pincode</label>
-              <input name="pincode" value={form.pincode} onChange={handleChange} />
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="two-column-row">
+                <div className="field-row">
+                  <label>City</label>
+                  <input name="city" value={form.city} onChange={handleChange} />
+                </div>
+                <div className="field-row">
+                  <label>Pincode</label>
+                  <input name="pincode" value={form.pincode} onChange={handleChange} />
+                </div>
+              </div>
 
-          <div className="field-row">
-            <label>State</label>
-            <input name="state" value={form.state} onChange={handleChange} />
-          </div>
+              <div className="field-row">
+                <label>State</label>
+                <input name="state" value={form.state} onChange={handleChange} />
+              </div>
 
-          <div className="two-column-row">
-            <div className="field-row">
-              <label>Date of Birth</label>
-              <input name="dob" type="date" value={form.dob || ''} onChange={handleChange} />
-            </div>
-            <div className="field-row">
-              <label>Gender</label>
-              <select name="gender" value={form.gender || ''} onChange={handleChange}>
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="others">Others</option>
-              </select>
-            </div>
-          </div>
+              <div className="two-column-row">
+                <div className="field-row">
+                  <label>Date of Birth</label>
+                  <input name="dob" type="date" value={form.dob || ''} onChange={handleChange} />
+                </div>
+                <div className="field-row">
+                  <label>Gender</label>
+                  <select name="gender" value={form.gender || ''} onChange={handleChange}>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Others</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
 
           <div style={{ display: 'flex', gap: 12 }}>
             <button type="submit" className="submit-button">Save changes</button>

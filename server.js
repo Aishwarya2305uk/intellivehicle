@@ -70,6 +70,31 @@ app.use(express.json())
 
 const apiPrefix = '/api'
 
+// Verify a Bearer token and return its decoded payload, or null if missing/invalid.
+function verifyAuth(req) {
+  const auth = req.headers.authorization || ''
+  const parts = auth.split(' ')
+  if (parts.length !== 2 || parts[0] !== 'Bearer') return null
+  try {
+    return jwt.verify(parts[1], JWT_SECRET)
+  } catch {
+    return null
+  }
+}
+
+// Build a partial-update SET clause from the allowed fields present in the body.
+function buildUpdates(allowed, body) {
+  const updates = []
+  const params = []
+  for (const key of allowed) {
+    if (Object.prototype.hasOwnProperty.call(body, key)) {
+      updates.push(`${key} = ?`)
+      params.push(body[key])
+    }
+  }
+  return { updates, params }
+}
+
 app.post(`${apiPrefix}/signup`, async (req, res) => {
   const { name, phone, email, password, dob, gender, city, pincode, state } = req.body
 
@@ -105,20 +130,28 @@ app.post(`${apiPrefix}/login`, async (req, res) => {
   }
 
   try {
-    const [rows] = await pool.query('SELECT id, name, email, phone, dob, gender, city, pincode, state, password FROM users WHERE email = ?', [email])
+    // Look up the email in users first, then drivers. The table it's found in
+    // determines the account role, which is baked into the token.
+    let role = 'user'
+    let [rows] = await pool.query('SELECT id, name, email, phone, dob, gender, city, pincode, state, password FROM users WHERE email = ?', [email])
+    if (rows.length === 0) {
+      role = 'driver'
+      ;[rows] = await pool.query('SELECT id, name, email, phone, address, password FROM drivers WHERE email = ?', [email])
+    }
+
     if (rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password.' })
     }
 
-    const user = rows[0]
-    const match = await bcrypt.compare(password, user.password)
+    const account = rows[0]
+    const match = await bcrypt.compare(password, account.password)
     if (!match) {
       return res.status(401).json({ error: 'Invalid email or password.' })
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '8h' })
-    const { password, ...publicUser } = user
-    return res.json({ message: 'Login successful.', user: publicUser, token })
+    const token = jwt.sign({ id: account.id, email: account.email, role }, JWT_SECRET, { expiresIn: '8h' })
+    const { password: _pwd, ...publicAccount } = account
+    return res.json({ message: 'Login successful.', user: { ...publicAccount, role }, token })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Unable to verify login.' })
@@ -127,24 +160,19 @@ app.post(`${apiPrefix}/login`, async (req, res) => {
 
 app.get(`${apiPrefix}/me`, async (req, res) => {
   try {
-    const auth = req.headers.authorization || ''
-    const parts = auth.split(' ')
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return res.status(401).json({ error: 'Missing or malformed token.' })
-    }
+    const payload = verifyAuth(req)
+    if (!payload) return res.status(401).json({ error: 'Missing or invalid token.' })
 
-    const token = parts[1]
-    let payload
-    try {
-      payload = jwt.verify(token, JWT_SECRET)
-    } catch (err) {
-      return res.status(401).json({ error: 'Invalid or expired token.' })
+    if (payload.role === 'driver') {
+      const [rows] = await pool.query('SELECT id, name, phone, email, address, created_at FROM drivers WHERE id = ?', [payload.id])
+      if (rows.length === 0) return res.status(404).json({ error: 'Driver not found.' })
+      return res.json({ user: { ...rows[0], role: 'driver' } })
     }
 
     const [rows] = await pool.query('SELECT id, name, phone, email, dob, gender, city, pincode, state, created_at FROM users WHERE id = ?', [payload.id])
     if (rows.length === 0) return res.status(404).json({ error: 'User not found.' })
 
-    return res.json({ user: rows[0] })
+    return res.json({ user: { ...rows[0], role: 'user' } })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Unable to fetch user.' })
@@ -153,38 +181,28 @@ app.get(`${apiPrefix}/me`, async (req, res) => {
 
 app.put(`${apiPrefix}/me`, async (req, res) => {
   try {
-    const auth = req.headers.authorization || ''
-    const parts = auth.split(' ')
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return res.status(401).json({ error: 'Missing or malformed token.' })
+    const payload = verifyAuth(req)
+    if (!payload) return res.status(401).json({ error: 'Missing or invalid token.' })
+
+    if (payload.role === 'driver') {
+      const { updates, params } = buildUpdates(['name', 'phone', 'address'], req.body)
+      if (updates.length === 0) return res.status(400).json({ error: 'No updatable fields provided.' })
+
+      params.push(payload.id)
+      await pool.query(`UPDATE drivers SET ${updates.join(', ')} WHERE id = ?`, params)
+
+      const [rows] = await pool.query('SELECT id, name, phone, email, address, created_at FROM drivers WHERE id = ?', [payload.id])
+      return res.json({ user: { ...rows[0], role: 'driver' } })
     }
 
-    const token = parts[1]
-    let payload
-    try {
-      payload = jwt.verify(token, JWT_SECRET)
-    } catch (err) {
-      return res.status(401).json({ error: 'Invalid or expired token.' })
-    }
-
-    const allowed = ['name', 'phone', 'city', 'pincode', 'state', 'dob', 'gender']
-    const updates = []
-    const params = []
-    for (const key of allowed) {
-      if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-        updates.push(`${key} = ?`)
-        params.push(req.body[key])
-      }
-    }
-
+    const { updates, params } = buildUpdates(['name', 'phone', 'city', 'pincode', 'state', 'dob', 'gender'], req.body)
     if (updates.length === 0) return res.status(400).json({ error: 'No updatable fields provided.' })
 
     params.push(payload.id)
-    const sql = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`
-    await pool.query(sql, params)
+    await pool.query(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, params)
 
     const [rows] = await pool.query('SELECT id, name, phone, email, dob, gender, city, pincode, state, created_at FROM users WHERE id = ?', [payload.id])
-    return res.json({ user: rows[0] })
+    return res.json({ user: { ...rows[0], role: 'user' } })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Unable to update user.' })
