@@ -7,6 +7,7 @@ import DriverSignUpForm from './DriverSignUpForm.jsx'
 import DriverDashboard from './DriverDashboard.jsx'
 import AccountSettings from './AccountSettings.jsx'
 import UserDashboard from './UserDashboard.jsx'
+import CommandCenter from './command/CommandCenter.jsx'
 
 function App() {
   const [page, setPage] = useState('landing')
@@ -50,7 +51,16 @@ function App() {
   }
 
   if (page === 'landing') {
-    return <LandingPage onGetStarted={handleGetStarted} />
+    return (
+      <LandingPage
+        onGetStarted={handleGetStarted}
+        onLaunchCommandCenter={() => setPage('command-center')}
+      />
+    )
+  }
+
+  if (page === 'command-center') {
+    return <CommandCenter onExit={() => setPage('landing')} />
   }
 
   if (page === 'driver-dashboard') {
