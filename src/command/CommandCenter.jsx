@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import './command.css'
 import { NAV_ITEMS, STATS, INTERSECTIONS } from './data.js'
+import { FLEET } from './fleet.js'
+import { FleetSimContext, useFleetSim } from './simulation.js'
 import Sidebar from './components/Sidebar.jsx'
 import TopBar from './components/TopBar.jsx'
 import CityMap from './components/CityMap.jsx'
@@ -12,6 +14,11 @@ import Hospitals from './components/Hospitals.jsx'
 import PriorityQueue from './components/PriorityQueue.jsx'
 import SystemHealth from './components/SystemHealth.jsx'
 import LiveAmbulances from './LiveAmbulances.jsx'
+import TrafficControl from './TrafficControl.jsx'
+import AIVision from './AIVision.jsx'
+import HospitalArrivals from './HospitalArrivals.jsx'
+import EmergencyPriority from './EmergencyPriority.jsx'
+import Analytics from './Analytics.jsx'
 import { StatCard } from './components/ui.jsx'
 import {
   IconAmbulance, IconSiren, IconRoute, IconGauge, IconHospital,
@@ -73,6 +80,7 @@ export default function CommandCenter({ onExit }) {
   const [active, setActive] = useState('command-center')
   const [menuOpen, setMenuOpen] = useState(false)
   const sim = useSimulation()
+  const fleetSim = useFleetSim(FLEET)
 
   const activeItem = NAV_ITEMS.find((n) => n.id === active)
 
@@ -82,6 +90,7 @@ export default function CommandCenter({ onExit }) {
   }
 
   return (
+    <FleetSimContext.Provider value={fleetSim}>
     <div className="cc-app">
       <Sidebar
         active={active}
@@ -151,6 +160,16 @@ export default function CommandCenter({ onExit }) {
           </main>
         ) : active === 'live-ambulances' ? (
           <LiveAmbulances />
+        ) : active === 'traffic-control' ? (
+          <TrafficControl />
+        ) : active === 'ai-detection' ? (
+          <AIVision />
+        ) : active === 'hospitals' ? (
+          <HospitalArrivals />
+        ) : active === 'emergency-priority' ? (
+          <EmergencyPriority />
+        ) : active === 'analytics' ? (
+          <Analytics />
         ) : (
           <main className="cc-content">
             <ModulePlaceholder label={activeItem?.label} />
@@ -158,5 +177,6 @@ export default function CommandCenter({ onExit }) {
         )}
       </div>
     </div>
+    </FleetSimContext.Provider>
   )
 }

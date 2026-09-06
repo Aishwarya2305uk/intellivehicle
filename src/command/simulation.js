@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { pointAt } from './mapGeometry.js'
 
 /* DEMO movement simulation for the fleet.
@@ -42,4 +42,16 @@ export function useFleetSim(fleet) {
    passed or imminent junctions are GREEN, the rest are still PREPARING. */
 export function corridorJunctionState(junction, progress) {
   return junction.at <= progress + 0.3 ? 'GREEN' : 'PREPARING'
+}
+
+/* One shared simulation clock for every Command Center module.
+   The shell runs useFleetSim once and provides { tick, telemetry } here, so
+   Live Ambulances, Traffic Control and AI Vision all observe the same
+   moment — exactly as they would with one real telemetry feed. */
+export const FleetSimContext = createContext(null)
+
+export function useSharedFleetSim() {
+  const ctx = useContext(FleetSimContext)
+  if (!ctx) throw new Error('useSharedFleetSim must be used inside CommandCenter')
+  return ctx
 }

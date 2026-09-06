@@ -41,9 +41,9 @@
 
 .landing-hero {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 16px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,34 +53,35 @@
 }
 
 .landing-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
-  gap: 24px;
+  gap: clamp(40px, 6vw, 88px);
   width: 100%;
 }
 
 .logo-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  text-align: center;
+  align-items: flex-start;
+  gap: clamp(16px, 2.6vh, 26px);
+  text-align: left;
 }
 
 .landing-title {
-  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.4rem);
   color: #f8fafc;
   margin: 0;
   font-weight: 900;
   letter-spacing: -1px;
+  line-height: 1.05;
 }
 
 .landing-tagline {
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-  color: #cbd5e1;
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  color: #93c5fd;
   margin: 0;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .features-grid {
@@ -129,9 +130,9 @@
 
 .landing-cta {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .cta-button {
@@ -171,20 +172,20 @@
 }
 
 .hero-lead {
-  max-width: 640px;
+  max-width: 560px;
   color: #cbd5e1;
-  font-size: clamp(1rem, 2.4vw, 1.15rem);
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.6vw, 1.12rem);
+  line-height: 1.7;
   margin: 0;
 }
 
 .hero-cta {
-  margin-top: 0;
+  margin-top: clamp(4px, 1.4vh, 14px);
 }
 
 /* Compact emergency line */
 .hero-emergency {
-  margin: 0;
+  margin: clamp(2px, 1vh, 10px) 0 0;
   padding: 10px 22px;
   border-radius: 999px;
   background: rgba(239, 68, 68, 0.12);
@@ -198,29 +199,48 @@
   font-weight: 800;
 }
 
-/* Feature highlight chips */
+/* Feature highlight cards */
 .hero-highlights {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2.2vh, 22px);
+  width: 100%;
 }
 
-.highlight-chip {
-  display: inline-flex;
+.highlight-card {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
-  border-radius: 999px;
+  gap: 14px;
+  padding: clamp(16px, 2.6vh, 24px) 20px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
-  font-size: 0.9rem;
-  font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.highlight-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.highlight-card h3 {
+  margin: 0 0 3px;
+  color: #f8fafc;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.highlight-card p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.85rem;
 }
 
 .highlight-icon {
-  font-size: 1.05rem;
+  font-size: 1.7rem;
+  flex-shrink: 0;
 }
 
 /* Shared section layout */
@@ -258,7 +278,7 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 18px 20px;
+  padding: clamp(18px, 3vh, 28px) 20px;
 }
 
 .stats-grid {
@@ -568,7 +588,7 @@
 
 /* Safety net: if the viewport is too short or narrow to fit everything,
    allow scrolling instead of clipping content. */
-@media (max-height: 620px), (max-width: 520px) {
+@media (max-height: 620px), (max-width: 920px) {
   .landing-page {
     height: auto;
     min-height: 100vh;
@@ -577,17 +597,37 @@
   }
 }
 
+/* Stack the hero into one centered column on smaller screens */
+@media (max-width: 920px) {
+  .landing-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .logo-section {
+    align-items: center;
+    text-align: center;
+  }
+
+  .landing-cta {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .landing-hero {
+    padding: 32px 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .landing-logo-container {
     padding: 12px 20px;
   }
 
-  .landing-hero {
-    padding: 16px 16px;
-  }
-
-  .landing-container {
-    gap: 18px;
+  .hero-highlights {
+    grid-template-columns: 1fr;
   }
 
   .features-grid {

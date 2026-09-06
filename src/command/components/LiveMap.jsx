@@ -16,7 +16,7 @@ export default function LiveMap({ fleet, telemetry, selectedId, onSelect, visibl
 
   return (
     <div className="cc-map-wrap cc-map-tall">
-      <svg className="cc-map-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid slice" role="img"
+      <svg className="cc-map-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" role="img"
         aria-label="Live ambulance tracking map (simulation)">
         <BaseCity idPrefix="cc-live" />
 

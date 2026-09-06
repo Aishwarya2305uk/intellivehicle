@@ -1,16 +1,6 @@
 import { INTERSECTIONS } from '../data.js'
-import { Card, Pill, Dot } from './ui.jsx'
+import { Card, Pill, Dot, SignalLight } from './ui.jsx'
 import { IconTrafficLight } from '../icons.jsx'
-
-function SignalLight({ state }) {
-  return (
-    <span className="cc-signal-light" aria-label={`Signal ${state}`}>
-      <span className={`cc-lamp${state === 'red' ? ' on-red' : ''}`} />
-      <span className={`cc-lamp${state === 'amber' ? ' on-amber' : ''}`} />
-      <span className={`cc-lamp${state === 'green' ? ' on-green' : ''}`} />
-    </span>
-  )
-}
 
 const DENSITY_TONE = { LOW: 'green', MEDIUM: 'amber', HIGH: 'red' }
 

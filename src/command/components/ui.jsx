@@ -35,6 +35,16 @@ export function Card({ title, icon, headRight, className = '', children }) {
   )
 }
 
+export function SignalLight({ state }) {
+  return (
+    <span className="cc-signal-light" aria-label={`Signal ${state}`}>
+      <span className={`cc-lamp${state === 'red' ? ' on-red' : ''}`} />
+      <span className={`cc-lamp${state === 'amber' ? ' on-amber' : ''}`} />
+      <span className={`cc-lamp${state === 'green' ? ' on-green' : ''}`} />
+    </span>
+  )
+}
+
 export function StatCard({ label, value, sub, tone = 'blue', icon }) {
   return (
     <article className="cc-stat">

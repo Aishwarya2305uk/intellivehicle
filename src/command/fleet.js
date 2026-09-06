@@ -29,6 +29,14 @@ export const FLEET = [
       [55, 500], [300, 500], [300, 260], [480, 260], [480, 120], [648, 120],
     ],
     segmentNames: ['Main Road', 'MG Road', 'Cross Street', 'MG Road North', 'Hospital Road'],
+    routeTraffic: 'MEDIUM',
+    altRoute: {
+      name: 'Via Ring Road',
+      via: 'Main Road → Ring Road → Lakeview Road → Hospital Road',
+      extraKm: 0.9,
+      traffic: 'HIGH',
+      note: 'Avoids MG Road junctions but crosses the Ring Road congestion.',
+    },
     corridor: {
       active: true,
       junctions: [
@@ -54,6 +62,14 @@ export const FLEET = [
       [480, 545], [480, 400], [300, 400], [300, 120], [140, 120],
     ],
     segmentNames: ['South Avenue', 'Ring Road', 'MG Road', 'Station Road'],
+    routeTraffic: 'MEDIUM',
+    altRoute: {
+      name: 'Via Station Loop',
+      via: 'South Avenue → North Loop → Station Road',
+      extraKm: 0.4,
+      traffic: 'MEDIUM',
+      note: 'Slightly longer with similar congestion.',
+    },
     corridor: null,
   },
   {
@@ -70,6 +86,14 @@ export const FLEET = [
       [40, 400], [480, 400], [660, 400], [660, 260], [770, 246],
     ],
     segmentNames: ['Ring Road West', 'Ring Road', 'Lakeview Road', 'Metro Approach'],
+    routeTraffic: 'HIGH',
+    altRoute: {
+      name: 'Via Old Market Road',
+      via: 'Cross Street → Old Market Road → Lakeview Road',
+      extraKm: 0.6,
+      traffic: 'LOW',
+      note: 'Longer, but bypasses the Ring Road congestion entirely.',
+    },
     corridor: null,
   },
   {
@@ -86,6 +110,14 @@ export const FLEET = [
       [40, 120], [120, 120], [120, 260], [300, 260], [300, 400], [120, 400],
     ],
     segmentNames: ['North Loop', 'Station Road', 'Old Market Road', 'Cross Street', 'Ring Road'],
+    routeTraffic: 'LOW',
+    altRoute: {
+      name: 'Via Ring Road West',
+      via: 'North Loop → Ring Road West',
+      extraKm: 1.2,
+      traffic: 'MEDIUM',
+      note: 'Detour with no time benefit for a non-emergency return.',
+    },
     corridor: null,
   },
 ]

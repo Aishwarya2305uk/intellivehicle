@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { FLEET, FLEET_STATUSES, FLEET_DESTINATIONS, EMERGENCY_LEVELS, sortByPriority, formatEta } from './fleet.js'
-import { useFleetSim, corridorJunctionState } from './simulation.js'
+import { useSharedFleetSim, corridorJunctionState } from './simulation.js'
+import { ARRIVAL_PHASES, arrivalPhaseFor, isHospitalBound } from './arrival.js'
 import LiveMap from './components/LiveMap.jsx'
 import { Card, Pill, Dot, Badge } from './components/ui.jsx'
 import {
@@ -19,7 +20,7 @@ export default function LiveAmbulances() {
   const [showRoute, setShowRoute] = useState(true)
   const [tracking, setTracking] = useState(true)
 
-  const { telemetry } = useFleetSim(FLEET)
+  const { telemetry } = useSharedFleetSim()
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -154,7 +155,14 @@ export default function LiveAmbulances() {
               </div>
 
               <div className="cc-em-list">
-                <div className="cc-em-item"><span className="cc-em-k">Status</span><span className="cc-em-v">{selected.status}</span></div>
+                <div className="cc-em-item">
+                  <span className="cc-em-k">Status</span>
+                  <span className="cc-em-v">
+                    {isHospitalBound(selected)
+                      ? ARRIVAL_PHASES[arrivalPhaseFor(selectedTel.progress)].label
+                      : selected.status}
+                  </span>
+                </div>
                 <div className="cc-em-item"><span className="cc-em-k">Driver</span><span className="cc-em-v">{selected.driver}</span></div>
                 <div className="cc-em-item"><span className="cc-em-k">Current Location</span><span className="cc-em-v">{selectedTel.locationName}</span></div>
                 <div className="cc-em-item"><span className="cc-em-k">Destination</span><span className="cc-em-v">{selected.destination}</span></div>

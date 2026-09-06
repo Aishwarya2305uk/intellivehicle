@@ -1,10 +1,10 @@
 import ChatBot from './ChatBot.jsx'
 
 const HIGHLIGHTS = [
-  { icon: '⏱️', title: 'Instant Response' },
-  { icon: '📍', title: 'Live Tracking' },
-  { icon: '👨‍⚕️', title: 'Professional Care' },
-  { icon: '💳', title: 'Easy Payment' },
+  { icon: '⏱️', title: 'Instant Response', text: 'Help within minutes' },
+  { icon: '📍', title: 'Live Tracking', text: 'Follow your ambulance' },
+  { icon: '👨‍⚕️', title: 'Professional Care', text: 'Trained paramedics' },
+  { icon: '💳', title: 'Easy Payment', text: 'UPI, cards & cash' },
 ]
 
 const STATS = [
@@ -34,25 +34,28 @@ function LandingPage({ onGetStarted, onLaunchCommandCenter }) {
               Book a fully-equipped ambulance in seconds, track it live, and get
               professional care on the way — any time, anywhere in the city.
             </p>
-          </div>
 
-          <div className="landing-cta hero-cta">
-            <button onClick={onGetStarted} className="cta-button">
-              Get Started
-            </button>
-            <p className="cta-text">Sign up now as a user or driver</p>
-          </div>
+            <div className="landing-cta hero-cta">
+              <button onClick={onGetStarted} className="cta-button">
+                Get Started
+              </button>
+              <p className="cta-text">Sign up now as a user or driver</p>
+            </div>
 
-          <p className="hero-emergency">
-            Life-threatening emergency? Call <strong>108</strong> (ambulance) or <strong>112</strong> (all-India)
-          </p>
+            <p className="hero-emergency">
+              Life-threatening emergency? Call <strong>108</strong> or <strong>112</strong>
+            </p>
+          </div>
 
           <div className="hero-highlights">
             {HIGHLIGHTS.map((h) => (
-              <span className="highlight-chip" key={h.title}>
+              <div className="highlight-card" key={h.title}>
                 <span className="highlight-icon">{h.icon}</span>
-                {h.title}
-              </span>
+                <div>
+                  <h3>{h.title}</h3>
+                  <p>{h.text}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
